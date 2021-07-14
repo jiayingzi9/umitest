@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-07-13 11:39:14
- * @LastEditTime: 2021-07-13 16:07:26
+ * @LastEditTime: 2021-07-14 18:08:39
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \umiapp\src\utils\ajax.tsx
@@ -12,7 +12,18 @@
 // JWT的声明一般被用来在身份提供者和服务提供者间传递被认证的用户身份信息，
 // 以便于从资源服务器获取资源，也可以增加一些额外的其它业务逻辑所必须的声明信息，该token也可直接被用于认证，也可被加密
 import axios, { AxiosRequestConfig, Method } from 'axios'
+import { TOKEN_KEY_LOCAL_STORAGE } from '../utils/constants';//常量
+import { getItem,setItem } from './localStorage';
 // TypeScript下拓展AxiosRequestConfig类型定义
+
+/**
+ * @description: 获取token,设置 jwt-token到 localStorage
+ * @param {*}
+ * @return {*}
+ */
+export function setAuthorizationToken(token:string):void{
+    setItem(TOKEN_KEY_LOCAL_STORAGE,token)
+}
 
 /**
  * @description: 封装同一的axios方法,定义函数customAxios,返回Promise对象
@@ -33,7 +44,14 @@ async function customAxios(
     }
     if(method==='get') conf.params = dataOrParams;
     else conf.data=dataOrParams
-    
+
+    // 在发送请求前校验token
+    const token=getItem(TOKEN_KEY_LOCAL_STORAGE)
+    if(token){
+         // header 拼接 token - jwt
+         conf.headers.authorization = `Bearer ${token}`
+    }
+
     // 发送请求
     const res =await axios(conf)
     // 处理结果
