@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-07-13 10:29:08
- * @LastEditTime: 2021-07-13 15:15:16
+ * @LastEditTime: 2021-07-15 09:52:22
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \umiapp\config\routes.ts
