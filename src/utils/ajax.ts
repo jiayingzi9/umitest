@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-07-13 11:39:14
- * @LastEditTime: 2021-07-14 18:08:39
+ * @LastEditTime: 2021-07-15 16:06:29
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \umiapp\src\utils\ajax.tsx
@@ -74,4 +74,16 @@ export async function axiosGet(
 ):Promise<any>{
     const data = await customAxios('get',url,params)
     return data
+}
+/**
+ * @description: post请求
+ * @param {*}
+ * @return {*}
+ */
+export async function axiosPost(
+    url:string='',
+    body:object={}
+):Promise<any>{
+    const data = await customAxios('post',url,body)
+    return data;
 }

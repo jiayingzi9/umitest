@@ -1,0 +1,56 @@
+# github actions 中文文档 https://docs.github.com/cn/actions/getting-started-with-github-actions
+
+name: deploy for dev #流程名称
+
+on: #触发条件
+   push:
+      branches:
+           - 'dev' # 只对 dev 分支下的以下条件自动化构建和测试
+       paths:
+            - '.github/workflows/*'
+            - '__test__/**'
+            - 'src/**'
+            - 'config/*'
+            - 'Dockerfile'
+            - 'docker-compose.yml'
+            - 'nginx.conf'
+
+jobs:  #任务
+    deploy:
+        runs-on: ubuntu-latest
+
+        steps:  //步骤
+            - uses: actions/checkout@v2
+            - name: Use Node.js
+              uses: actions/setup-node@v1
+              with:
+                  node-version: 14
+            - name: set ssh key # 临时设置 ssh key
+              run: |
+                  mkdir -p ~/.ssh/
+                  echo "${{secrets.WFP_ID_RSA}}" > ~/.ssh/id_rsa 
+                  chmod 600 ~/.ssh/id_rsa
+                  #ssh-keyscan "这里填写测试机" >> ~/.ssh/known_hosts
+            - name: deploy # 部署
+              run: |
+                  # ssh work@这里填写测试机 "
+                    # 【注意】手动创建 /home/work/imooc-lego 目录
+                    # 然后 git clone https://username:password@github.com/imooc-lego/admin-fe.git -b dev （私有项目，使用 github 用户名和密码下载）
+                    # 记得删除 origin ，否则会暴露 github 密码
+
+                    cd /home/work/imooc-lego/admin-fe;
+                    git remote add origin https://wangfupeng1988:${{secrets.WFP_PASSWORD}}@github.com/imooc-lego/admin-fe.git;
+                    git checkout dev;
+                    git pull origin dev; # 重新下载最新代码
+                    git remote remove origin; # 删除 origin ，否则会暴露 github 密码
+
+                    # 构建 prd-dev
+                    npm i;
+                    npm run build-dev;
+
+                    # 启动 docker
+                    docker-compose build admin-fe; # 和 docker-compose.yml service 名字一致
+                    docker-compose up -d;
+                  "
+            - name: delete ssh key # 删除 ssh key
+              run: rm -rf ~/.ssh/id_rsa
