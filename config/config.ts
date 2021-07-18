@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-07-13 10:26:25
- * @LastEditTime: 2021-07-15 09:51:47
+ * @LastEditTime: 2021-07-18 16:30:08
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \umiapp\config\config.ts
@@ -27,6 +27,15 @@ export default defineConfig({
   // 定义全局变量
   define:{
     'process.env.ENV':'dev'
+  },
+  // 配置代理能力
+  //配置完成之后,不需要访问http://public-api-v1.aspirantzhang.com,直接访问http://localhost:8000/api/users
+  proxy: {
+    '/api': {
+      'target': 'http://public-api-v1.aspirantzhang.com',
+      'changeOrigin': true,
+      'pathRewrite': { '^/api' : '' },
+    },
   },
   fastRefresh: {},
 });
