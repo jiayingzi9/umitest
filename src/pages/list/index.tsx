@@ -1,13 +1,13 @@
 /*
  * @Author: your name
  * @Date: 2021-07-17 17:55:19
- * @LastEditTime: 2021-07-18 17:35:57
+ * @LastEditTime: 2021-07-21 21:59:57
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \umiapp\src\pages\list\index.tsx
  */
 // list  模块主要用于dva数据流
-import React,{useState,useEffect}from "react";
+import React,{useState,useEffect,useRef, createRef}from "react";
 import { Table, Tag, Space,Modal, Button} from 'antd';
 import { connect } from "@/.umi/plugin-dva/exports";
 import ListModal from './components/listModal';
@@ -74,6 +74,22 @@ import ListModal from './components/listModal';
 
 const List=(props)=>{
     let { list } = props;
+    const getFormValue = useRef();
+    useEffect(() => {
+      console.log('getFormValue---',getFormValue)
+      const { formFields }: any = getFormValue.current;
+       // 首先表单校验
+       formFields.validateFields().then(() => {
+      const values = formFields.getFieldsValue();
+      formFields.setFieldsValue({ nickName: 'hilo!' });
+      console.log('ref---',values);
+    });
+      
+    }, [])
+    const submit=()=>{
+      // 获取到了
+      console.log('getFormValue---',getFormValue)
+    }
     const columns = [
         {
           title: 'id',
@@ -117,12 +133,11 @@ const List=(props)=>{
         setRecord(record);
         setIsModalVisible(true)
       }
-    console.log('isModalVisible---',isModalVisible)
     
     // callback=(value)=>{
     //     setIsModalVisible(value)
     // }
-    console.log('propssddd',props)
+
     // list格式 list:{data:{data:[]}}
     // ES5语法
     // const dataList = list && list.data && list.data.data;
@@ -130,14 +145,20 @@ const List=(props)=>{
     // const dataList = list?.data?.data;
     const dataList = list?.data?.data?.list;
     // let {data} =list && list.data;
-    console.log('组件里面获取公共数据')
 
     
     return(
     <div>
+         <Button onClick={submit}>提交</Button>
         <Table columns={columns} dataSource={dataList}  rowKey="id"/>
         {/* setIsModalVisible={setIsModalVisible}子组件传父组件 */}
-        <ListModal visible={isModalVisible} record={record} setIsModalVisible={setIsModalVisible}/>
+
+        <ListModal 
+        visible={isModalVisible} 
+        record={record} 
+        setIsModalVisible={setIsModalVisible}
+        ref={getFormValue}
+         />
     </div>
     );
 
